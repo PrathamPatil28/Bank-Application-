@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme{
+   --keyframes : {
+        slideIn: {
+            '0%': { transform: 'translateY(-100%)' },
+            '100%': { transform: 'translateY(0)' },
+        },
+   },
+    --animation : {
+          slideIn: 'slideIn 1s ease-in-out forwards',
+    },
+    --fontFamily :{
+        roboto : ['Roboto', 'sans-serif'],
+    },
+    --minWidth :{
+        '500' : '500px',
+    }
+
+    --width:{
+        '500' : '500px',
+        '300' : '300px',
+        '350' : '350px',
+        '400' : '400px',
+        '250' : '250px',
+        '200' : '200px',
+    }
+    --padding:{
+        '500' : '500px',
+        '300' : '300px',
+        '350' : '350px',
+        '400' : '400px',
+        '250' : '250px',
+        '200' : '200px',
+
+    },
+    --margin:{
+        '500' : '500px',
+        '300' : '300px',
+        '350' : '350px',
+        '400' : '400px',
+        '250' : '250px',
+        '200' : '200px',
+
+    },
+    --minWidth:{
+        '500' : '500px',
+        '300' : '300px',
+        '350' : '350px',
+        '400' : '400px',
+        '250' : '250px',
+        '200' : '200px',
+
+    },
+    --maxWidth:{
+        '500' : '500px',
+        '300' : '300px',
+        '350' : '350px',
+        '400' : '400px',
+        '250' : '250px',
+        '200' : '200px',
+
+    },
+
+    --colors:{
+        'golden' : '#ffbf56'
+    }
+}

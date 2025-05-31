@@ -1,0 +1,257 @@
+@startuml
+class com.bank.IOBANK.config.AppConfig {
+- UserRepo userRepo
++ UserDetailsService userDetailsService()
++ PasswordEncoder passwordEncoder()
++ AuthenticationProvider authenticationProvider()
++ AuthenticationManager authenticationManager(AuthenticationConfiguration)
+}
+
+
+class com.bank.IOBANK.Response.AccountResponseDTO {
+- String accountId
+- long accountNumber
+- double balance
+- String code
+- String label
+- char symbol
+}
+
+class com.bank.IOBANK.controller.UserController {
+- UserService userService
++ ResponseEntity<User> registerUser(UserDTO)
++ ResponseEntity<?> loginUser(UserDTO)
+}
+
+
+class com.bank.IOBANK.entity.User {
+- String id
+- String firstName
+- String lastName
+- String username
+- LocalDate dob
+- String tel
+- String tag
+- String password
+- String gender
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+- List<String> roles
+- Card card
+- List<Transaction> transaction
+- List<Account> accounts
++ Collection<? extends GrantedAuthority> getAuthorities()
+}
+
+
+enum com.bank.IOBANK.enums.Status {
++  PENDING
++  COMPLETED
++  FAILED
++  EXPIRED
++  CANCELLED
+}
+
+interface com.bank.IOBANK.service.TransactionService {
++ Transaction createAccountTransaction(double,Type,double,User,Account)
+}
+
+class com.bank.IOBANK.serviceImpl.TransactionServiceImpl {
+- TransactionRepo transactionRepo
++ Transaction createAccountTransaction(double,Type,double,User,Account)
+}
+
+
+interface com.bank.IOBANK.repo.UserRepo {
+~ User findByUsernameIgnoreCase(String)
+}
+
+class com.bank.IOBANK.serviceImpl.AccountServiceImpl {
+- AccountRepo accountRepo
+- AccountHelper accountHelper
++ Account createAccount(AccountDTO,User)
++ List<Account> getUserAccounts(String)
++ Transaction transferFunds(TransferDTO,User)
+}
+
+
+class com.bank.IOBANK.utils.RandomUtil {
++ Long generateRandom(int)
+}
+
+interface com.bank.IOBANK.service.UserService {
++ User registerUser(UserDTO)
+~ Map<String,Object> loginUser(UserDTO)
+}
+
+class com.bank.IOBANK.serviceImpl.UserServiceImpl {
+- UserRepo userRepo
+- PasswordEncoder passwordEncoder
+- UserDetailsService userDetailsService
+- AuthenticationManager authenticationManager
+- JwtService jwtService
++ User registerUser(UserDTO)
++ Map<String,Object> loginUser(UserDTO)
+- User mapToUser(UserDTO)
+}
+
+
+class com.bank.IOBANK.entity.Card {
+- String cardId
+- String cardNumber
+- String cardHolder
+- Double balance
+- LocalDate iss
+- LocalDateTime updatedAt
+- LocalDate exp
+- String pin
+- String billingAddress
+- User owner
+- List<Transaction> transaction
+}
+
+class com.bank.IOBANK.dto.TransferDTO {
+- long recipientAccountNumber
+- double amount
+- String code
+}
+
+interface com.bank.IOBANK.repo.CardRepo {
+}
+class com.bank.IOBANK.helper.AccountHelper {
+- AccountRepo accountRepo
+- TransactionRepo transactionRepo
+- TransactionService transactionService
+- Map<String,String> CURRENCIES
++ Account createAccount(AccountDTO,User)
++ Transaction performTransfer(Account,Account,double,User)
++ void validAccountNonExistsForUser(String,String)
++ void validAccountOwner(Account,User)
++ void validateSufficientFunds(Account,double)
+}
+
+
+class com.bank.IOBANK.entity.Transaction {
+- String id
+- Double amount
+- Double txFee
+- String sender
+- String receiver
+- LocalDateTime updatedAt
+- LocalDateTime createdAt
+- Status status
+- Type type
+- Card card
+- User owner
+- Account account
+}
+
+class com.bank.IOBANK.dto.AccountDTO {
+- String code
+- String label
+- char symbol
+}
+
+interface com.bank.IOBANK.service.AccountService {
+~ Account createAccount(AccountDTO,User)
+~ List<Account> getUserAccounts(String)
+~ Transaction transferFunds(TransferDTO,User)
+}
+
+class com.bank.IOBANK.dto.UserDTO {
+- String firstName
+- String lastName
+- String username
+- LocalDate dob
+- String tel
+- String tag
+- String password
+- String gender
+}
+
+class com.bank.IOBANK.entity.Account {
+- String accountId
+- double balance
+- String accountName
+- long accountNumber
+- String currency
+- String code
+- String label
+- char symbol
+- LocalDateTime updatedAt
+- LocalDateTime createdAt
+- Status status
+- Type type
+- List<Transaction> transaction
+- User owner
+}
+
+class com.bank.IOBANK.filter.JwtAuthenticationFilter {
+- JwtService jwtService
+- UserDetailsService userDetailsService
+- UserRepo userRepo
+# void doFilterInternal(HttpServletRequest,HttpServletResponse,FilterChain)
+}
+
+
+enum com.bank.IOBANK.enums.Type {
++  WITHDRAW
++  DEPOSIT
++  DEBIT
++  CREDIT
+}
+
+interface com.bank.IOBANK.repo.AccountRepo {
+~ boolean existsByAccountNumber(Long)
+~ boolean existsByCodeAndOwner_Id(String,String)
+~ List<Account> findByOwner_Id(String)
+~ Optional<Account> findByCodeAndOwner_Id(String,String)
+~ Optional<Account> findByAccountNumber(Long)
+}
+
+class com.bank.IOBANK.jwt.JwtService {
+- {static} long EXPIRATION_TIME
+- String jwtSecrete
++ SecretKey generateKey()
++ String generateToken(String)
++ Claims extractClaims(String)
++ String extractSubject(String)
++ boolean isTokenValid(String)
++ Date extractExpiration(String)
+}
+
+
+interface com.bank.IOBANK.repo.TransactionRepo {
+}
+class com.bank.IOBANK.config.SecurityConfig {
+- JwtAuthenticationFilter authenticationFilter
+- AuthenticationProvider authenticationProvider
++ SecurityFilterChain securityFilterChain(HttpSecurity)
++ CorsConfigurationSource configurationSource()
+}
+
+
+class com.bank.IOBANK.IoBankApplication {
++ {static} void main(String[])
+}
+
+class com.bank.IOBANK.controller.AccountController {
+- AccountService accountService
++ ResponseEntity<AccountResponseDTO> createAccount(AccountDTO,Authentication)
++ ResponseEntity<List<Account>> userAccounts(Authentication)
++ ResponseEntity<Transaction> transferFunds(TransferDTO,Authentication)
+}
+
+
+
+
+org.springframework.security.core.userdetails.UserDetails <|.. com.bank.IOBANK.entity.User
+com.bank.IOBANK.service.TransactionService <|.. com.bank.IOBANK.serviceImpl.TransactionServiceImpl
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.UserRepo
+com.bank.IOBANK.service.AccountService <|.. com.bank.IOBANK.serviceImpl.AccountServiceImpl
+com.bank.IOBANK.service.UserService <|.. com.bank.IOBANK.serviceImpl.UserServiceImpl
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.CardRepo
+org.springframework.web.filter.OncePerRequestFilter <|-- com.bank.IOBANK.filter.JwtAuthenticationFilter
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.AccountRepo
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.TransactionRepo
+@enduml

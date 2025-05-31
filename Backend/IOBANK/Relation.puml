@@ -1,0 +1,100 @@
+@startuml
+class com.bank.IOBANK.entity.Account {
+- String accountId
+- String accountName
+- long accountNumber
+- String currency
+- String code
+- String label
+- char symbol
+- LocalDateTime updatedAt
+- LocalDateTime createdAt
+- Status status
+- Type type
+- List<Transaction> transaction
+- User owner
+}
+
+class com.bank.IOBANK.entity.Transaction {
+- String id
+- Double amount
+- Double txFee
+- String sender
+- String receiver
+- LocalDateTime updatedAt
+- LocalDateTime createdAt
+- Status status
+- Type type
+- Card card
+- User owner
+- Account account
+}
+
+interface com.bank.IOBANK.repo.UserRepo {
+~ User findByUserNameIgnoreCase(String)
+}
+
+interface com.bank.IOBANK.repo.AccountRepo {
+}
+enum com.bank.IOBANK.enums.Type {
++  WITHDRAW
++  DEPOSIT
++  DEBIT
++  CREDIT
+}
+
+class com.bank.IOBANK.entity.User {
+- String id
+- String firstName
+- String lastName
+- String userName
+- LocalDate dob
+- String tel
+- String tag
+- String password
+- String gender
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+- List<String> roles
+- Card card
+- List<Transaction> transaction
+- List<Account> accounts
+}
+
+enum com.bank.IOBANK.enums.Status {
++  PENDING
++  COMPLETED
++  FAILED
++  EXPIRED
++  CANCELLED
+}
+
+interface com.bank.IOBANK.repo.TransactionRepo {
+}
+class com.bank.IOBANK.entity.Card {
+- String cardId
+- String cardNumber
+- String cardHolder
+- Double balance
+- LocalDate iss
+- LocalDateTime updatedAt
+- LocalDate exp
+- String pin
+- String billingAddress
+- User owner
+- List<Transaction> transaction
+}
+
+interface com.bank.IOBANK.repo.CardRepo {
+}
+class com.bank.IOBANK.IoBankApplication {
++ {static} void main(String[])
+}
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.UserRepo
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.AccountRepo
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.TransactionRepo
+org.springframework.data.jpa.repository.JpaRepository <|-- com.bank.IOBANK.repo.CardRepo
+@enduml
